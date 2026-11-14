@@ -1,0 +1,23 @@
+// Short action labels; data definitions and effects live in their own copy modules.
+const keys=['sources','measure','method','source','limits','share','copy','copied','failed','hide','show','details','compare','explore','close','choose','noData','reading','location','link','summary'];
+const rows={
+ en:['Understand the data','What the filter shows','Models and scenarios','Data source','What the data cannot tell us','Share view','Copy link','Link copied','Could not copy. Select the link below.','Hide colours','Show colours','About this estimate','Compare years','View place details','Close','Choose a filter','No estimate available','On the map','Location','View link','World overview'],
+ fr:['Comprendre les données','Ce que montre le filtre','Modèles et scénarios','Source des données','Ce que les données ne disent pas','Partager la vue','Copier le lien','Lien copié','Copie impossible. Sélectionnez le lien ci-dessous.','Masquer les couleurs','Afficher les couleurs','Comprendre cette estimation','Comparer les années','Voir les détails du lieu','Fermer','Choisir un filtre','Estimation indisponible','Sur la carte','Lieu','Lien de la vue','Vue mondiale'],
+ es:['Entender los datos','Qué muestra el filtro','Modelos y escenarios','Fuente de datos','Qué no dicen los datos','Compartir vista','Copiar enlace','Enlace copiado','No se pudo copiar. Selecciona el enlace de abajo.','Ocultar colores','Mostrar colores','Sobre esta estimación','Comparar años','Ver detalles del lugar','Cerrar','Elige un filtro','Estimación no disponible','En el mapa','Lugar','Enlace de la vista','Vista mundial'],
+ it:['Capire i dati','Cosa mostra il filtro','Modelli e scenari','Fonte dei dati','Cosa non dicono i dati','Condividi vista','Copia link','Link copiato','Copia non riuscita. Seleziona il link qui sotto.','Nascondi i colori','Mostra i colori','Capire questa stima','Confronta gli anni','Vedi i dettagli del luogo','Chiudi','Scegli un filtro','Stima non disponibile','Sulla mappa','Luogo','Link della vista','Vista mondiale'],
+ vi:['Hiểu dữ liệu','Bộ lọc thể hiện gì','Mô hình và kịch bản','Nguồn dữ liệu','Dữ liệu không thể cho biết gì','Chia sẻ góc nhìn','Sao chép liên kết','Đã sao chép liên kết','Không thể sao chép. Hãy chọn liên kết bên dưới.','Ẩn màu','Hiện màu','Hiểu ước tính này','So sánh các năm','Xem chi tiết địa điểm','Đóng','Chọn bộ lọc','Không có ước tính','Trên bản đồ','Địa điểm','Liên kết góc nhìn','Tổng quan thế giới'],
+ ja:['データを理解する','指標が示すこと','モデルとシナリオ','データの出典','データで分からないこと','表示を共有','リンクをコピー','リンクをコピーしました','コピーできませんでした。下のリンクを選択してください。','色を非表示','色を表示','この推計について','年を比較','場所の詳細を見る','閉じる','指標を選ぶ','推計値なし','地図上の表示','場所','表示のリンク','世界の概要'],
+ zh:['理解数据','指标显示什么','模型与情景','数据来源','数据无法说明什么','分享视图','复制链接','链接已复制','无法复制。请选择下方链接。','隐藏颜色','显示颜色','了解这项估计','比较年份','查看地点详情','关闭','选择指标','暂无估计','地图上的显示','地点','视图链接','全球概览'],
+ 'zh-Hant':['理解資料','指標顯示什麼','模型與情境','資料來源','資料無法說明什麼','分享視圖','複製連結','連結已複製','無法複製。請選取下方連結。','隱藏顏色','顯示顏色','了解這項估計','比較年份','查看地點詳情','關閉','選擇指標','暫無估計','地圖上的顯示','地點','視圖連結','全球概覽']
+};
+const stories={
+ en:['Create a story','Instagram Stories · 9:16 · Choose a city or country, then customise your image.'],
+ fr:['Créer une story','Instagram Stories · 9:16 · Choisissez une ville ou un pays, puis personnalisez votre image.'],
+ es:['Crear una story','Instagram Stories · 9:16 · Elige una ciudad o un país y personaliza tu imagen.'],
+ it:['Crea una storia','Instagram Stories · 9:16 · Scegli una città o un paese e personalizza la tua immagine.'],
+ vi:['Tạo tin','Instagram Stories · 9:16 · Chọn một thành phố hoặc quốc gia, rồi tùy chỉnh hình ảnh.'],
+ ja:['ストーリーを作成','Instagram Stories · 9:16 · 都市または国を選び、画像をカスタマイズ。'],
+ zh:['创建快拍','Instagram Stories · 9:16 · 选择城市或国家，再自定义图片。'],
+ 'zh-Hant':['建立限時動態','Instagram Stories · 9:16 · 選擇城市或國家，再自訂圖片。']
+};
+export const experienceUICopy=lang=>({...Object.fromEntries(keys.map((key,i)=>[key,(rows[lang]||rows.en)[i]])),story:(stories[lang]||stories.en)[0],storyHint:(stories[lang]||stories.en)[1]});

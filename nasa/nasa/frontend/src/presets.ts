@@ -1,0 +1,68 @@
+import type { RegionPreset } from "./types";
+
+export const REGION_PRESETS: RegionPreset[] = [
+  {
+    id: "arctic",
+    name: "Arctic Polar Cap",
+    sphere: "air",
+    bbox: [-180.0, 66.5, 180.0, 90.0],
+    description: "Rapid polar warming zone demonstrating Arctic Amplification (66.5°N - 90°N)",
+    recommended_var: "merra2_t2m",
+  },
+  {
+    id: "greenland",
+    name: "Greenland Ice Sheet",
+    sphere: "land",
+    bbox: [-55.0, 60.0, -25.0, 83.0],
+    description: "Massive ice sheet experiencing surface melting and accelerated coastal calving",
+    recommended_var: "merra2_t2m",
+  },
+  {
+    id: "sahel",
+    name: "Sahel Belt",
+    sphere: "water",
+    bbox: [-15.0, 10.0, 30.0, 18.0],
+    description: "Semi-arid African ecological transition zone with monsoon oscillations",
+    recommended_var: "gpm_precip",
+  },
+  {
+    id: "amazon",
+    name: "Amazon Rainforest",
+    sphere: "land",
+    bbox: [-75.0, -15.0, -50.0, 5.0],
+    description: "Earth's largest tropical rainforest and critical global carbon & moisture sink",
+    recommended_var: "smap_soil_moisture",
+  },
+  {
+    id: "mediterranean",
+    name: "Mediterranean Basin",
+    sphere: "air",
+    bbox: [-5.0, 30.0, 35.0, 45.0],
+    description: "Climate change hotspot characterized by expanding summer drought and heat waves",
+    recommended_var: "merra2_t2m",
+  },
+  {
+    id: "great_plains",
+    name: "US Great Plains",
+    sphere: "land",
+    bbox: [-105.0, 32.0, -95.0, 48.0],
+    description: "Major agricultural grain belt sensitive to drought and moisture fluctuations",
+    recommended_var: "modis_ndvi",
+  },
+  {
+    id: "indo_gangetic",
+    name: "Indo-Gangetic Plain",
+    sphere: "air",
+    bbox: [72.0, 22.0, 88.0, 31.0],
+    description: "Densely populated plain subject to heavy seasonal particulate aerosol hazes",
+    recommended_var: "modis_aod",
+  },
+  {
+    id: "outback",
+    name: "Australian Outback",
+    sphere: "land",
+    bbox: [115.0, -32.0, 145.0, -18.0],
+    description: "Arid interior prone to intensifying heat extremes and long-period drought cycles",
+    recommended_var: "smap_soil_moisture",
+  },
+];

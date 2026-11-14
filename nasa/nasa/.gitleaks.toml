@@ -1,0 +1,40 @@
+# Gitleaks Configuration for NASA Data Detectives
+title = "NASA Data Detectives gitleaks config"
+
+[extend]
+# Extends default gitleaks rules if running standard gitleaks binary
+
+[allowlist]
+description = "Global allowlist for examples, mock tokens, and documentation"
+paths = [
+  '''^\.env\.example$''',
+  '''^README\.md$''',
+  '''^package-lock\.json$''',
+  '''^frontend/package-lock\.json$''',
+]
+regexes = [
+  '''your_nasa_earthdata_username''',
+  '''your_nasa_earthdata_password''',
+]
+
+[[rules]]
+id = "nasa-earthdata-credentials"
+description = "Detected potential NASA Earthdata credentials in plain text"
+regex = '''(?i)(earthdata|urs\.earthdata\.nasa\.gov)[-_]?(user(name)?|pass(word)?|token|key)\s*[:=]\s*['"][^'"]{4,}['"]'''
+secretGroup = 0
+keywords = [
+  "earthdata",
+  "urs.earthdata.nasa.gov"
+]
+
+[[rules]]
+id = "generic-api-key"
+description = "Detected Generic API Key or Secret"
+regex = '''(?i)(api[_-]?key|secret[_-]?key|access[_-]?token)\s*[:=]\s*['"][a-zA-Z0-9_\-]{16,}['"]'''
+secretGroup = 0
+keywords = [
+  "api_key",
+  "secret_key",
+  "access_token"
+]
+

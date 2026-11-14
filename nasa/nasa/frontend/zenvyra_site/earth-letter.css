@@ -1,0 +1,184 @@
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@1,600;1,700;1,800;1,900&family=Fraunces:ital,opsz,wght,SOFT@1,9..144,600..800,100&family=Cormorant+Garamond:ital,wght@1,600;1,700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Cuneiform&text=%F0%92%80%80%F0%92%86%A0%F0%92%87%BD%F0%92%88%97%F0%92%8C%93&display=swap');
+@font-face{font-family:EarthLausanne;src:url('./fonts/TWKLausanne-400Italic.woff2') format('woff2');font-style:italic;font-display:swap}
+@font-face{font-family:EarthHerbik;src:url('./fonts/Herbik-MediumItalic.woff2') format('woff2');font-style:italic;font-display:swap}
+#earth-shell{position:fixed;inset:0;width:100%;height:100%;max-width:none;max-height:none;margin:0;padding:0;border:0;background:none;color:#c9cdc9;overflow:auto;--earth-ease:cubic-bezier(.19,1,.22,1)}
+#earth-shell[open]{display:grid;place-items:center}
+#earth-letter-main[hidden]{display:none}
+#language-dialog{position:fixed;inset:0;margin:0;border:0;padding:32px 24px;width:100%;height:100%;max-width:none;max-height:none;box-sizing:border-box;overflow:auto;background:#050606;color:#daddd7}
+#language-dialog::backdrop{background:#050606}
+#language-dialog[open]{display:grid;place-items:center}
+.language-content{width:min(340px,100%);margin:auto;text-align:center;animation:language-arrive 1.4s cubic-bezier(.19,1,.22,1) both}
+.language-globe{width:84px;height:84px;opacity:.85;margin-bottom:28px;filter:drop-shadow(0 0 16px #cbd5bd15)}
+#language-title{font:400 32px/1.2 "TWK Lausanne",Arial,sans-serif;letter-spacing:-.055em;margin:0 0 34px;outline:0}
+#language-dialog:is(:lang(ja),:lang(zh)) #language-title{font:400 24px/1.5 var(--police),sans-serif;letter-spacing:0}
+#language-options{border:0;padding:0;margin:0;display:grid;gap:3px;text-align:left;min-width:0}
+#language-options label{position:relative;display:flex;align-items:center;min-height:48px;padding:0 20px;border:1px solid transparent;border-radius:12px;cursor:pointer;transition:background .35s,border-color .35s,color .35s,transform .5s cubic-bezier(.19,1,.22,1);color:#939b9e;animation:language-arrive .9s cubic-bezier(.19,1,.22,1) calc(.12s + var(--row,0)*.045s) both}
+#language-options input{position:absolute;inset:0;margin:0;opacity:0;cursor:pointer;width:100%;height:100%}
+#language-options span{font:400 17px/1.5 var(--police),Arial,sans-serif;letter-spacing:0}
+#language-options label:hover{color:#f0f2e9;background:#ffffff09;transform:translateX(3px)}
+#language-options label:has(input:focus-visible){outline:1px solid #e4eaf4;outline-offset:3px}
+#language-continue{display:inline-flex;align-items:center;gap:15px;margin:28px 0 0;padding:8px 0;border:0;background:none;color:#c3cac7;font:400 13px/1.5 var(--police),Arial,sans-serif;cursor:pointer}
+#language-continue svg{width:40px;height:40px;box-sizing:border-box;padding:10px;border:1px solid #cad6f030;border-radius:50%;stroke:currentColor;stroke-width:1.25;transition:background .25s,border-color .25s,transform .25s}
+#language-continue:hover svg{background:#ffffff09;border-color:#cad6f077;transform:translateX(3px)}
+#language-continue:focus-visible{outline:1px solid #9ab1eb;outline-offset:7px;border-radius:2px}
+@keyframes language-arrive{from{opacity:0;filter:blur(12px);transform:translateY(10px)}to{opacity:1;filter:none;transform:none}}
+@media(max-height:650px){#language-dialog{padding-block:24px}.language-globe{width:46px;height:46px;margin-bottom:14px}#language-title{margin-bottom:18px}#language-options label{min-height:44px}#language-continue{margin-top:16px}}
+@media(prefers-reduced-motion:reduce){.language-content,#language-options label{animation:none}#language-options label,#language-continue svg{transition:none}}
+#earth-shell:lang(ja) .letter,#earth-shell:lang(zh) .letter{font-style:normal;font-family:var(--police),sans-serif;line-height:1.75;letter-spacing:0}
+#earth-shell:lang(ja) h1,#earth-shell:lang(ja) .signature{font-family:'Hiragino Mincho ProN','Yu Mincho',serif;font-style:normal;line-height:1.5}
+#earth-shell:lang(zh) h1,#earth-shell:lang(zh) .signature{font-family:'Songti SC','Noto Serif CJK SC',serif;font-style:normal;line-height:1.5}
+#earth-shell::backdrop{background:#050606;opacity:var(--earth-veil,1)}
+#earth-letter-main:focus{outline:none}
+#earth-shell h1 .glyphs{font-size:.62em;letter-spacing:.1em}
+body:has(#earth-shell[open]) .panneau{visibility:hidden}
+body:has(#earth-shell[open]) #voile{visibility:hidden}
+#earth-letter-main{position:relative;width:min(760px,calc(100% - 64px));padding:80px 0 54px;transition:opacity 1.3s,filter 1.5s,transform 1.8s var(--earth-ease)}
+#earth-shell h1{font-family:'Playfair Display','Fraunces','Cormorant Garamond',Georgia,serif;font-style:italic;font-weight:800;font-size:clamp(44px,6vw,68px);line-height:1.15;letter-spacing:-.02em;margin:0 0 72px;color:#ffffff;text-shadow:0 2px 28px rgba(255,255,255,.2)}
+#earth-shell h1:focus{outline:none}
+#earth-shell .letter{font-family:'Playfair Display','Fraunces','Cormorant Garamond',Georgia,serif;font-style:italic;font-weight:700;font-size:clamp(23px,3vw,33px);line-height:1.62;letter-spacing:-.015em;color:#f0f5ed;text-rendering:optimizeLegibility;-webkit-font-smoothing:antialiased}
+#earth-shell p{margin:0}
+#earth-shell .letter p+p:not(.signature){margin-top:.85em}
+#earth-shell .signature{font-family:'Playfair Display','Fraunces','Cormorant Garamond',Georgia,serif;font-style:italic;font-weight:800;font-size:clamp(32px,4vw,48px);text-align:right;margin-top:54px;color:#ffffff;letter-spacing:-.01em;text-shadow:0 2px 24px rgba(255,255,255,.25)}
+#earth-shell h1,#earth-shell .letter p{opacity:0;filter:blur(8px);transform:translateY(8px);animation:earth-arrive 2.2s cubic-bezier(.22,.61,.36,1) calc(.2s + var(--line,0)*1.6s) forwards}
+#earth-shell .word{position:relative;display:inline-block;white-space:pre;cursor:default;outline-offset:4px;vertical-align:bottom}
+#earth-shell .latin{opacity:0;transition:opacity .55s}
+#earth-shell .glyphs{position:absolute;inset:0;display:flex;align-items:center;overflow:hidden;font:14px/1.5 Georgia,serif;font-variant-emoji:text;letter-spacing:2px;color:#b6bfb5;animation:earth-wave 7s ease-in-out infinite;animation-delay:var(--phase);pointer-events:none;white-space:nowrap}
+#earth-shell .revealing .glyphs{animation:earth-decode .55s ease-in-out infinite;color:#dce2d8}
+#earth-shell .revealing .glyphs.roman{font-family:'Playfair Display','Fraunces',Georgia,serif;font-style:italic;font-weight:700;font-size:1em;letter-spacing:-.015em}
+#earth-shell .revealed .glyphs{display:none}
+#earth-shell .revealed .latin{opacity:1;animation:earth-settle 1s var(--earth-ease) both}
+#earth-shell .word:focus-visible{outline:1px solid #929c90}
+#earth-shell .invitation{margin-top:54px;min-height:48px;text-align:right;opacity:1;visibility:visible;pointer-events:auto;transform:none;transition:opacity .5s var(--earth-ease)}
+#earth-shell.complete .invitation{opacity:1;visibility:visible;pointer-events:auto;transform:none}
+#earth-shell button#future{font:700 14px/1.5 var(--mono,ui-monospace,monospace);letter-spacing:.2em;text-transform:uppercase;color:#ffffff;text-decoration:none;padding:12px 0;display:inline-block;background:none;border:0;cursor:pointer;position:relative;transition:color .25s ease,opacity .25s ease}
+#earth-shell button#future:hover{color:#39e6d4}
+#earth-shell #future::after{content:"";display:block;height:2px;background:#39e6d4;transform:scaleX(1);transform-origin:left;transition:transform .5s cubic-bezier(.165,.84,.44,1);box-shadow:0 0 12px rgba(57,230,212,.7)}
+#earth-shell.complete #future::after{transform:scaleX(1)}
+#earth-shell.complete h1{animation:none;opacity:1;filter:none;transform:none}
+#earth-shell.complete h1,#earth-shell #letter{transition:opacity .35s ease,filter .35s ease}
+@media(hover:hover) and (pointer:fine){#earth-shell.complete:not(.departing):has(#future:hover) :is(h1,#letter){opacity:.5;filter:blur(1.5px)}}
+@media(prefers-reduced-motion:reduce){#earth-shell.complete h1,#earth-shell #letter{transition:none}}
+#earth-shell button:focus-visible{outline:1px solid #dce3d5;outline-offset:7px}
+#earth-shell button:hover{color:white}
+#earth-orb{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;opacity:0;transition:opacity .35s}
+#earth-shell.departing{overflow:hidden}
+#earth-shell.departing #earth-letter-main{pointer-events:none;opacity:0;filter:blur(2px);transform:none;transition:opacity .35s,filter .35s}
+#earth-shell.departing #earth-orb{opacity:1}
+#earth-shell.returning #earth-orb{transition:none}
+#earth-recovery{position:fixed;bottom:25px;left:0;right:0;text-align:center;color:#9aa397;font-size:13px}
+#earth-recovery[hidden]{display:none}
+@keyframes earth-arrive{to{opacity:1;filter:blur(0);transform:none}}
+@keyframes earth-wave{0%,100%{opacity:.18;transform:translateY(2px)}50%{opacity:.8;transform:translateY(-2px)}}
+@keyframes earth-decode{0%,100%{opacity:.45;filter:blur(1px);transform:translateY(2px)}50%{opacity:1;filter:blur(0);transform:translateY(-1px)}}
+@keyframes earth-settle{from{opacity:.25;filter:blur(5px);transform:translateY(3px)}to{opacity:1;filter:blur(0);transform:none}}
+@media(max-width:600px){#earth-letter-main{width:calc(100% - 48px);padding:60px 0 40px}#earth-shell h1{font-size:34px;margin-bottom:56px}#earth-shell .letter{font-size:17px;line-height:1.4}#earth-shell .signature{font-size:22px;margin-top:43px}#earth-shell .glyphs{font-size:13px;letter-spacing:1px}#earth-shell .invitation{margin-top:30px}}
+@media(prefers-reduced-motion:reduce){#earth-shell h1,#earth-shell .letter p{animation:none;opacity:1;filter:none;transform:none}#earth-shell .glyphs{animation:none;opacity:.65}#earth-shell .revealed .latin{animation:none}#earth-shell::backdrop,#earth-shell .invitation,#earth-letter-main,#earth-orb,#earth-shell .latin,.scroll-explore-indicator,.scroll-down-arrow{animation:none;transition:none}}
+
+/* Minimal Elegant Scroll to Explore Indicator */
+.scroll-explore-indicator {
+  position: absolute;
+  bottom: 26px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  z-index: 1000;
+  padding: 8px 16px;
+  color: #daddd7;
+  opacity: 0;
+  animation: scroll-indicator-appear 1.4s ease 1.2s forwards;
+  transition: color 0.3s ease, opacity 0.35s ease, transform 0.35s ease;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.scroll-explore-indicator.hidden {
+  opacity: 0 !important;
+  pointer-events: none !important;
+  transform: translateX(-50%) translateY(12px) !important;
+  transition: opacity 0.25s ease, transform 0.25s ease !important;
+}
+
+#earth-shell.departing .scroll-explore-indicator {
+  opacity: 0;
+  pointer-events: none;
+  transform: translateX(-50%) translateY(8px);
+}
+
+.scroll-explore-text {
+  font-family: 'Playfair Display', 'Fraunces', 'Cormorant Garamond', EarthHerbik, Georgia, serif;
+  font-style: italic;
+  font-weight: 600;
+  font-size: 13px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: inherit;
+  white-space: nowrap;
+}
+
+.scroll-down-arrow {
+  display: block;
+  width: 14px;
+  height: 9px;
+  stroke: currentColor;
+  animation: subtle-arrow-bounce 2s cubic-bezier(0.45, 0, 0.55, 1) infinite;
+  transition: transform 0.3s ease;
+}
+
+.scroll-explore-indicator:hover,
+.scroll-explore-indicator:focus-visible {
+  outline: none;
+  color: #ffffff;
+  transform: translateX(-50%) translateY(2px);
+}
+
+.scroll-explore-indicator:hover .scroll-down-arrow {
+  opacity: 1;
+}
+
+@keyframes scroll-indicator-appear {
+  from {
+    opacity: 0;
+    transform: translateX(-50%) translateY(10px);
+  }
+  to {
+    opacity: 0.85;
+    transform: translateX(-50%) translateY(0);
+  }
+}
+
+@keyframes subtle-arrow-bounce {
+  0%, 100% {
+    transform: translateY(0);
+    opacity: 0.65;
+  }
+  50% {
+    transform: translateY(5px);
+    opacity: 1;
+  }
+}
+
+@media (max-height: 700px) {
+  .scroll-explore-indicator {
+    bottom: 12px;
+    gap: 3px;
+    transform: translateX(-50%) scale(0.9);
+  }
+}
+
+@media (max-width: 600px) {
+  .scroll-explore-indicator {
+    bottom: 14px;
+    gap: 3px;
+  }
+  .scroll-explore-text {
+    font-size: 11px;
+    letter-spacing: 0.14em;
+  }
+}

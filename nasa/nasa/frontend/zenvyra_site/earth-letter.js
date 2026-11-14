@@ -1,0 +1,291 @@
+import { startOrb } from './earth-orb.mjs';
+import { language, getText, message, openLanguage } from './i18n.mjs';
+
+const shell = document.querySelector('#earth-shell');
+shell.showModal();
+shell.addEventListener('cancel', event => event.preventDefault());
+shell.addEventListener('keydown', event => event.stopPropagation());
+const letter = document.querySelector('#letter');
+const future = document.querySelector('#future');
+const motion = matchMedia('(prefers-reduced-motion: reduce)');
+const returning = document.documentElement.classList.contains('returning-visit');
+const signs = Array.from('·✺+⋮✶⋅⊹✧');
+const cuneiform = Array.from('𒀀𒆠𒇽𒈗𒌓');
+const words = [];
+let finished = 0, pointerReady = false, letterReady = false, arrivalRevision = 0;
+const revealTimers = new Set();
+/* Attendre toutes les lignes, pas un délai plus court que leur apparition.
+   Le pointeur déjà posé reste inactif jusqu'à un nouveau mouvement. */
+function armLetter() {
+  const revision = ++arrivalRevision;
+  letterReady = false; pointerReady = false;
+  shell.classList.remove('interaction-ready');
+  for (const item of words) if (!item.started) item.word.tabIndex = -1;
+  const main = document.getElementById('earth-letter-main');
+  if (main.hidden || !shell.open) return;
+  requestAnimationFrame(async () => {
+    if (revision !== arrivalRevision || main.hidden || !shell.open) return;
+    const lines = [shell.querySelector('h1'), ...letter.querySelectorAll('p')];
+    const arrivals = lines.flatMap(line => line.getAnimations()).filter(animation => animation.animationName === 'earth-arrive');
+    await Promise.allSettled(arrivals.map(animation => animation.finished));
+    if (revision !== arrivalRevision || main.hidden || !shell.open || departing) return;
+    if (lines.some(line => Number(getComputedStyle(line).opacity) < .999)) return;
+    letterReady = true;
+    shell.classList.add('interaction-ready');
+    for (const item of words) if (!item.started) item.word.tabIndex = 0;
+    // Auto-reveal words progressively so the letter deciphers smoothly on screen
+    words.forEach((item, i) => {
+      setTimeout(() => {
+        if (!item.started && !departing) reveal(item);
+      }, 300 + i * 25);
+    });
+  });
+}
+if (!returning) {
+  if (new URLSearchParams(location.search).has('direct') || localStorage.getItem('terra-langue')) {
+    const boot = document.getElementById('boot-screen');
+    if (boot) boot.hidden = true;
+    document.getElementById('earth-letter-main').hidden = false;
+    document.getElementById('earth-letter-main').focus({preventScroll:true});
+    armLetter();
+  } else {
+    openLanguage(() => {
+      document.getElementById('earth-letter-main').hidden = false;
+      document.getElementById('earth-letter-main').focus({preventScroll:true});
+      armLetter();
+    }, true);
+  }
+}
+
+function buildLetter() {
+  for (const timer of revealTimers) clearInterval(timer);
+  revealTimers.clear(); words.length = 0; finished = 0;
+  pointerReady = false; letterReady = false;
+  shell.classList.remove('complete', 'interaction-ready'); future.tabIndex = -1;
+  const t = getText().ui;
+  shell.lang = language(); shell.setAttribute('aria-label', t.letterLabel);
+  shell.querySelector('h1').textContent = t.letterTitle;
+  const opening = document.createElement('p'), body = document.createElement('p'), signature = document.createElement('p');
+  opening.textContent = t.letterOpening;
+  body.textContent = t.letterBody;
+  signature.className = 'signature'; signature.textContent = 'Zenvyra.';
+  letter.replaceChildren(opening, body, signature); future.textContent = 'Enter Zenvyra';
+  document.querySelector('#earth-recovery p').textContent = t.globeSlow;
+  document.querySelector('#earth-retry').textContent = t.retry;
+  const segmenter = typeof Intl.Segmenter === 'function' ? new Intl.Segmenter(language(), {granularity:'word'}) : null;
+for (const [line, paragraph] of [shell.querySelector('h1'), ...letter.querySelectorAll('p')].entries()) {
+  paragraph.style.setProperty('--line', line);
+  for (const node of [...paragraph.childNodes]) {
+    if (node.nodeType !== Node.TEXT_NODE) continue;
+    const fragment = document.createDocumentFragment();
+    const segments = ['ja', 'zh', 'zh-Hant'].includes(language())
+      ? [...(segmenter ? segmenter.segment(node.textContent) : Array.from(node.textContent, segment => ({segment,isWordLike:!/[\p{P}\s]/u.test(segment)})))].reduce((parts, {segment, isWordLike}) => {
+        if (!isWordLike && parts.length && !/\s/.test(segment)) parts[parts.length - 1] += segment;
+        else parts.push(segment);
+        return parts;
+      }, []) : node.textContent.split(/(\s+)/);
+    for (const text of segments) {
+      if (!text.trim()) { fragment.append(text); continue; }
+      const word = document.createElement('span');
+      word.className = 'word';
+      word.tabIndex = -1;
+      word.setAttribute('role', 'button');
+      word.setAttribute('aria-label', message('revealWord', {word: text}));
+      const latin = document.createElement('span');
+      latin.className = 'latin';
+      latin.textContent = text;
+      const glyphs = document.createElement('span');
+      glyphs.className = 'glyphs';
+      glyphs.setAttribute('aria-hidden', 'true');
+      const index = words.length;
+      glyphs.style.setProperty('--phase', `${-(index * .21 + line * .55)}s`);
+      glyphs.textContent = signsFor(index, text.length);
+      word.append(latin, glyphs);
+      const item = { word, glyphs, text, index, started: false };
+      words.push(item);
+      word.addEventListener('pointerenter', () => { if (pointerReady) reveal(item); });
+      word.addEventListener('pointerdown', () => reveal(item));
+      word.addEventListener('focus', () => reveal(item));
+      word.addEventListener('keydown', event => {
+        if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); reveal(item); }
+      });
+      fragment.append(word);
+    }
+    node.replaceWith(fragment);
+  }
+}
+}
+buildLetter();
+window.addEventListener('terra-language', () => { if (!departing) { buildLetter(); armLetter(); } });
+
+function signsFor(index, length) {
+  return Array.from({ length: Math.max(1, Math.ceil(length / 1.2)) }, (_, j) => signs[(index * 3 + j * 5) % signs.length]).join('');
+}
+
+function reveal(item) {
+  if (!letterReady || item.started || departing) return;
+  item.started = true;
+  const { word, glyphs, text, index } = item;
+  word.classList.add('revealing');
+  if (motion.matches) { finish(item); return; }
+  let step = 0;
+  const timer = setInterval(() => {
+    step++;
+    if (step === 8 || motion.matches) { clearInterval(timer); revealTimers.delete(timer); finish(item); return; }
+    if (step < 4) glyphs.textContent = signsFor(index + step, text.length);
+    else {
+      glyphs.classList.add('roman');
+      glyphs.textContent = Array.from(text, (character, position) => position < (step - 3) / 4 * text.length ? character : cuneiform[(position + step * 7 + index) % cuneiform.length]).join('');
+    }
+  }, 75);
+  revealTimers.add(timer);
+}
+
+function finish({ word }) {
+  word.classList.remove('revealing');
+  word.classList.add('revealed');
+  word.removeAttribute('role');
+  word.removeAttribute('aria-label');
+  word.tabIndex = -1;
+  finished++;
+  if (finished === words.length) {
+    shell.classList.add('complete');
+    future.tabIndex = 0;
+  }
+}
+
+function revealNearPointer(event) {
+  if (!letterReady) return;
+  pointerReady = true;
+  for (const item of words) {
+    if (item.started) continue;
+    const rect = item.word.getBoundingClientRect();
+    const dx = Math.max(rect.left - event.clientX, 0, event.clientX - rect.right);
+    const dy = Math.max(rect.top - event.clientY, 0, event.clientY - rect.bottom);
+    if (dx * dx + dy * dy < 30 * 30) reveal(item);
+  }
+}
+document.getElementById('earth-letter-main').addEventListener('pointermove', revealNearPointer);
+document.getElementById('earth-letter-main').addEventListener('pointerdown', revealNearPointer);
+
+
+let departing = false, entered = false, stopOrb, recoveryTimer;
+motion.addEventListener('change', () => { if (shell.open && !departing) armLetter(); });
+const codeTimer = setInterval(() => {
+  if (document.hidden || motion.matches || departing) return;
+  const time = Math.floor(performance.now() / 900);
+  for (const item of words) if (!item.started && (item.index + time) % 7 === 0) item.glyphs.textContent = signsFor(item.index + time, item.text.length);
+}, 900);
+function enter() {
+  if (!departing || entered || !window.terraIntro?.ready()) return;
+  try { entered = window.terraIntro.enter(returning); }
+  catch { document.querySelector('#earth-recovery').hidden = false; }
+}
+function loopEnter() {
+  enter();
+  if (!entered && departing) setTimeout(loopEnter, 100);
+}
+window.addEventListener('terra-ready', enter);
+document.querySelector('#earth-retry').addEventListener('click', () => location.reload());
+future.tabIndex = 0;
+future.addEventListener('click', () => {
+  if (departing) return;
+  for (const item of words) {
+    if (!item.started) finish(item);
+  }
+  departing = true;
+  clearInterval(codeTimer);
+  const origins = [];
+  for (const element of shell.querySelectorAll('.latin')) {
+    const style = getComputedStyle(element);
+    let offset = 0;
+    for (const character of Array.from(element.textContent)) {
+      const range = document.createRange();
+      range.setStart(element.firstChild, offset); offset += character.length; range.setEnd(element.firstChild, offset);
+      const rect = range.getBoundingClientRect();
+      if (character.trim()) origins.push({x:rect.left+rect.width/2,y:rect.top+rect.height/2,character,font:`${style.fontStyle} ${style.fontWeight} ${style.fontSize} ${style.fontFamily}`});
+    }
+  }
+  document.querySelector('#earth-letter-main').inert = true;
+  shell.classList.add('departing');
+  loopEnter();
+  stopOrb = startOrb(document.querySelector('#earth-orb'), origins, {
+    reduced: motion.matches || new URLSearchParams(location.hash.slice(1)).has('v'),
+    ready: () => entered,
+    points: () => window.terraIntro?.points() || [],
+    materialize: progress => {
+      shell.classList.add('materializing');
+      shell.style.setProperty('--earth-veil', String(1 - progress));
+    },
+    complete: () => {
+      clearTimeout(recoveryTimer);
+      if (!entered) window.terraIntro?.enter?.(returning);
+      window.terraIntro?.complete?.();
+      shell.close();
+    }
+  });
+  recoveryTimer = setTimeout(() => { if (!entered) document.querySelector('#earth-recovery').hidden = false; }, 16000);
+});
+
+const scrollExplore = document.getElementById('scroll-explore');
+if (scrollExplore) {
+  scrollExplore.addEventListener('click', (event) => {
+    event.preventDefault();
+    scrollExplore.classList.add('hidden');
+    const target = document.querySelector('.invitation') || document.getElementById('future');
+    if (target) {
+      target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+  });
+
+  const onScrollHideIndicator = () => {
+    if (shell.scrollTop > 15) {
+      scrollExplore.classList.add('hidden');
+    } else {
+      scrollExplore.classList.remove('hidden');
+    }
+  };
+
+  shell.addEventListener('scroll', onScrollHideIndicator, { passive: true });
+  shell.addEventListener('wheel', (e) => {
+    if (e.deltaY > 5) {
+      scrollExplore.classList.add('hidden');
+    }
+  }, { passive: true });
+  shell.addEventListener('touchmove', () => {
+    scrollExplore.classList.add('hidden');
+  }, { passive: true });
+}
+document.getElementById('bouton-recommencer').addEventListener('click', () => {
+  try {
+    const keys = ['terra-intro-complete','terra-langue','terra-recents','terra-story-opts','terra-son'];
+    for (const key of Object.keys(localStorage)) if (keys.includes(key) || key.startsWith('terra-pedago-')) localStorage.removeItem(key);
+  } catch {}
+  const url = new URL(location.href);
+  url.hash = ''; url.searchParams.delete('lang');
+  location.replace(url);
+});
+if (returning) {
+  departing = true;
+  clearInterval(codeTimer);
+  shell.classList.add('departing', 'returning');
+  shell.setAttribute('aria-label', getText().ui.globeSlow);
+  document.getElementById('boot-screen').hidden = true;
+  enter();
+  stopOrb = startOrb(document.getElementById('earth-orb'), [], {
+    returning:true, reduced:motion.matches,
+    ready:() => entered,
+    points:() => [],
+    materialize:progress => {
+      shell.classList.add('materializing');
+      shell.style.setProperty('--earth-veil', String(1 - progress));
+    },
+    complete:() => {
+      clearTimeout(recoveryTimer);
+      window.terraIntro.complete();
+      shell.close();
+    }
+  });
+  recoveryTimer = setTimeout(() => { if (!entered) document.getElementById('earth-recovery').hidden = false; }, 16000);
+}
+window.addEventListener('pagehide', event => { if (!event.persisted) { clearInterval(codeTimer); clearTimeout(recoveryTimer); stopOrb?.(); } });

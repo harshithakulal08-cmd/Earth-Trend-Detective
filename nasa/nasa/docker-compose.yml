@@ -1,0 +1,36 @@
+version: '3.8'
+
+services:
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: nasa_detectives_backend
+    environment:
+      - APP_ENV=production
+      - DEBUG=False
+      - APP_PORT=8000
+      - ALLOWED_ORIGINS=http://localhost:3000,http://localhost:5173
+      - CACHE_DIR=/app/cache
+      - EARTHDATA_USERNAME=${EARTHDATA_USERNAME:-}
+      - EARTHDATA_PASSWORD=${EARTHDATA_PASSWORD:-}
+    ports:
+      - "8000:8000"
+    restart: unless-stopped
+    volumes:
+      - backend_cache:/app/cache
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: nasa_detectives_frontend
+    ports:
+      - "3000:80"
+    depends_on:
+      - backend
+    restart: unless-stopped
+
+volumes:
+  backend_cache:
+
